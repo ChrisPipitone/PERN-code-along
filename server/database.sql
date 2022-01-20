@@ -1,7 +1,9 @@
 CREATE DATABASE perntodo;
 
+-- need to update 
 CREATE TABLE todo(
     todo_id SERIAL PRIMARY KEY,
+    user_id VARCHAR(255) FOREIGN KEY REFERENCES users(user_id),
     description  VARCHAR(225)
 );
 
@@ -16,3 +18,4 @@ CREATE TABLE users(
 );
 
 INSERT INTO users (user_name, user_email, user_password) VALUES ('Chris','chrispipitone@gmail', '12345');
+     
