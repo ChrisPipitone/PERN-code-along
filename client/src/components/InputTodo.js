@@ -1,19 +1,34 @@
 import React, {Fragment, useState} from "react";
 
-const InputTodo = () => {
+const InputTodo = (userId) => {
 
     const [description, setDescription] = useState("");
 
     const onSubmitForm = async (e) => {
         e.preventDefault();
         try {
+
             const body = {description};
-            const response = await fetch("http://localhost:5000/todos", {
+            const response = await fetch(`http://localhost:5000/todos`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json" },
                 body: JSON.stringify(body)
             });
-           window.location = "/";
+
+            //get todo from response to 'tie' it to the user
+            const parseRes = await response.json();
+            const tid = parseRes.todo_id;
+
+            //now we have the uid and tid
+            //do new api call to add the two to the other table
+            const newRes = await fetch(`http://localhost:5000/todos/${userId.uId}&${tid}`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+            const bob = newRes.json();
+            
+          // window.location = "/dashboard"; // /dashboard/ ??
         } catch (error) {
             console.error(error.message)
         }
