@@ -18,38 +18,15 @@ app.use("/dashboard", require("./routes/dashboard"));
 
 // //
 
-
-//create a todo
-app.post("/todos", async(req,res) => {
-    try {
-        console.log(req.body)
-        const {description} = req.body;
-        const newTodo = await pool.query(
-            "INSERT INTO todo (description) VALUES($1) RETURNING *", 
-            [description]
-        );
-        // const tid = await pool.query(
-        //     "SELECT todo_id FROM todo WHERE description = $1", [description]
-        // );
-        // const newTodo = await pool.query(
-        //     "INSERT INTO user_todos (uid, tid) VALUES($1, $2) RETURNING *", 
-        //     [uid, tid]
-        // );
-        res.json(newTodo.rows[0]);
-    } catch (error) {
-        console.error(error.message)
-    }
-})
-
 //add a new entry into users todos
-app.post("/todos/:uid&:tid", async(req,res) => {
+app.post("/todos/:uid", async(req,res) => {
     try {
-        const uid = req.params.uid;
-        const tid = req.params.tid;
+        const {uid} = req.params;
+        const {description} = req.body;
 
         const newUserTodo = await pool.query(
-            "INSERT INTO user_todos (uid, tid) VALUES($1, $2) RETURNING *", 
-            [uid, tid]
+            "INSERT INTO todo (description, uid) VALUES($1, $2) RETURNING *", 
+            [description, uid]
         );
         res.json(newUserTodo.rows[0]);
     } catch (error) {
@@ -58,23 +35,11 @@ app.post("/todos/:uid&:tid", async(req,res) => {
 });
 
 //get all a user's todos
-app.get("/todos", async(req, res) => {
+app.get("/todos/:uid", async(req, res) => {
     try {
-        const allTodos = await pool.query("SELECT * FROM todo");
-        res.json(allTodos.rows);
-    } catch(error)
-    {
-        console.error(error.message)
-    }
-})
-
-//get a todo 
-app.get("/todos/:uid&:id", async(req, res) => {
-    try {
-        const {id} = req.params;
-        const todo = await pool.query("SELECT * FROM todo WHERE todo_id = $1", [id])
-
-        res.json(todo.rows[0])
+        const {uid} = req.params;
+        const userTodos = await pool.query("SELECT description, todo_id FROM todo WHERE uid = $1", [uid]);
+        res.json(userTodos.rows);
     } catch(error)
     {
         console.error(error.message)
@@ -103,10 +68,14 @@ app.put("/todos/:id", async(req, res) => {
 })
 
 //delete a todo
-app.delete("/todos/:uid&:id", async(req, res) => {
+//samething here it looks like its techniqally possible for someone to delete a todo without 
+//being its owner but again i'm not sure if that's really in the scope of this assingment to prevent that
+//if I'm wrong... oh well its my fault for not asking 
+app.delete("/todos/:id", async(req, res) => {
     try {
         const {id} = req.params;
-        const deleteTodo = await pool.query("DELETE FROM todo WHERE todo_id = $1", [id]);
+        const deleteTodo = await pool.query(
+            "DELETE FROM todo WHERE todo_id = $1", [id]);
         res.json("Todo was Deleted");
     } catch(error)
     {
@@ -118,3 +87,60 @@ app.delete("/todos/:uid&:id", async(req, res) => {
 app.listen(5000, () => {
     console.log("server has started on port 5000")
 });
+
+
+
+
+//===========OLD WORK IGNORE ===============
+//=========kept as reference===========
+// //create a todo OLD WITHOUT USERS
+// app.post("/todos", async(req,res) => {
+//     try {
+//         console.log(req.body)
+//         const {description} = req.body;
+//         const newTodo = await pool.query(
+//             "INSERT INTO todo (description) VALUES($1) RETURNING *", 
+//             [description]
+//         );
+//         // const tid = await pool.query(
+//         //     "SELECT todo_id FROM todo WHERE description = $1", [description]
+//         // );
+//         // const newTodo = await pool.query(
+//         //     "INSERT INTO user_todos (uid, tid) VALUES($1, $2) RETURNING *", 
+//         //     [uid, tid]
+//         // );
+//         res.json(newTodo.rows[0]);
+//     } catch (error) {
+//         console.error(error.message)
+//     }
+// })
+//===============================================
+
+//===========OLD WORK IGNORE ===============
+//=========kept as reference===========
+// app.get("/todos", async(req, res) => {
+//     try {
+//         //const userTodos = await pool.query("SELECT tid FROM user_todos WHERE uid = '$1' ", [uid]);
+//         const allTodos = await pool.query("SELECT * FROM todo");
+//         res.json(allTodos.rows);
+//     } catch(error)
+//     {
+//         console.error(error.message)
+//     }
+// })
+
+
+//get a todo 
+//idk where we use this, not used 
+// app.get("/todos/:id", async(req, res) => {
+//     try {
+//         const {id} = req.params;
+//         const todo = await pool.query("SELECT * FROM todo WHERE todo_id = $1", [id])
+
+//         res.json(todo.rows[0])
+//     } catch(error)
+//     {
+//         console.error(error.message)
+//     }
+// })
+//==========================

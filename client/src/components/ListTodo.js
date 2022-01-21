@@ -2,9 +2,9 @@ import React, {Fragment, useEffect, useState} from 'react';
 
 import EditTodo from './EditTodo';
 
-const ListTodos = () => {
-
+const ListTodos = (userId) => {
     const [todos, setTodos] = useState([]);
+    const [uid, setUid] = useState();
 
     const deleteTodo = async (id) => {
         try {
@@ -19,11 +19,12 @@ const ListTodos = () => {
         }
     }
 
-    const getTodos = async () => {
+    const getTodos = async (id) => {
         try {
-            const response = await fetch("http://localhost:5000/todos")
+            //console.log(userId.uId);
+            const response = await fetch(`http://localhost:5000/todos/${userId.uId}`)
+           // const response = await fetch(`http://localhost:5000/todos`)
             const jsonData = await response.json();
-
             setTodos(jsonData);
         } catch (error) {
             console.error(error.message);
@@ -32,9 +33,10 @@ const ListTodos = () => {
 
     useEffect( () => {
         getTodos();
-    }, []);
+        setUid(userId.uId);
+    }, [userId]);
 
-    console.log(todos);
+    //console.log(todos);
     return(
     <Fragment>
         {" "}

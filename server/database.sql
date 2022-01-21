@@ -2,9 +2,10 @@ CREATE DATABASE perntodo;
 
 CREATE TABLE todo(
     todo_id SERIAL PRIMARY KEY,
-    description  VARCHAR(225)
+    description  VARCHAR(225),
+    uid uuid,
+    CONSTRAINT fk_user FOREIGN KEY(uid) REFERENCES users(user_id)
 );
-
 
 -- set extention
 CREATE TABLE users(
@@ -18,13 +19,13 @@ CREATE TABLE users(
 INSERT INTO users (user_name, user_email, user_password) VALUES ('Chris','chrispipitone@gmail', '12345');
 
 
-CREATE TABLE user_todos(
-    uid uuid,
-    tid INT,
-    PRIMARY KEY (uid, tid),
-    CONSTRAINT fk_user FOREIGN KEY(uid) REFERENCES users(user_id),
-    CONSTRAINT fk_todo FOREIGN KEY(tid) REFERENCES todo(todo_id)
-);
+-- CREATE TABLE user_todos(
+--     uid uuid,
+--     tid INT,
+--     PRIMARY KEY (uid, tid),
+--     CONSTRAINT fk_user FOREIGN KEY(uid) REFERENCES users(user_id) ON DELETE CASCADE,
+--     CONSTRAINT fk_todo FOREIGN KEY(tid) REFERENCES todo(todo_id) ON DELETE CASCADE
+-- );
 
 -- query to find all todos of a user 
 
