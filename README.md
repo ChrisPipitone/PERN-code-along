@@ -2,6 +2,8 @@ Chris pipitone
 this project is a basic todo list that demonstrates CRUD using the PERN stack 
 it provides login and registration for users without option to delete the account currently
 
+it uses jtw tokens for account authorization and authentication 
+
 code was created from the code alongs via 
 
 login part one
